@@ -1,0 +1,100 @@
+<html><head></head>
+<script>
+p1y=p2y=40;
+paddleWidth=10;
+paddleHeight=100;
+bx=by=50;
+bd=6;
+xv=yv=5;
+score1=score2=0;
+ais=5;
+num=30;
+
+window.onload=function() {
+	c = document.getElementById('gc');
+	cc = c.getContext('2d');
+	setInterval(update,1000/50);
+	c.addEventListener('mousemove', function(e){
+		p1y = e.clientY-paddleHeight/2;
+	});
+	c.addEventListener('click', function(){
+		ais += 1;
+		console.log(ais);
+	});
+}
+
+function reset(){
+	bx=c.width/2;
+	by=c.height/2;
+	xv=-xv;
+	yv = Math.random();
+	
+}
+
+function update() {
+	bx+=xv;
+	by+=yv;
+	if(by<0&&yv<0){
+		yv=-yv;
+	}
+	if(by>c.height&&yv>0){
+		yv=-yv;
+	}
+	if(bx<paddleWidth){
+		if(by>p1y && by<p1y+paddleHeight){
+			xv=-xv;
+			dy=by-(p1y+paddleHeight/2);
+			yv = dy*0.3;
+		} else {
+			score2++;
+			reset();
+			console.log("reset");
+		}
+	}
+	if(bx>c.width - paddleWidth){
+		if(by>p2y && by<p2y+paddleHeight){
+			xv=-xv;
+			dy=by-(p2y+paddleHeight/2);
+			yv = dy*0.3;
+		} else {
+			score1++;
+			reset();
+			console.log("reset");
+		}
+	}
+	
+	if(p2y+paddleHeight/2<by){
+		p2y+=ais;
+	} else {
+		p2y-=ais;
+	}
+	// canvas
+	cc.fillStyle='#1b661b';
+	cc.fillRect(0,0,c.width,c.height);
+	// paddle
+	cc.fillStyle='#77220a';
+	cc.fillRect(0,p1y,paddleWidth,paddleHeight);
+	cc.fillRect(c.width-paddleWidth,p2y,paddleWidth,paddleHeight);
+	// ball
+	cc.fillStyle='white';
+	cc.fillRect(bx-bd/2,by-bd/2,bd,bd);
+	// score
+	cc.font = "30px arial";
+	cc.fillText(score1, 100, 100);
+	cc.fillText(score2,c.width - 100, 100);
+	cc.beginPath();
+    cc.moveTo(c.width/2, 0);
+    cc.lineTo(c.width/2, c.height);
+	cc.stroke();
+	// lines
+	cc.fillStyle='black';
+	cc.beginPath();
+	cc.arc(c.width/2,c.height/2, 70, 0, 2 * Math.PI);
+	cc.stroke();
+}
+</script>
+<body>
+<canvas id="gc" width="800" height="600"></canvas>
+<!--<h1>F5 to reset</h1> -->
+</body>
+</html>
